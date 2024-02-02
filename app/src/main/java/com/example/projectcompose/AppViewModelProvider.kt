@@ -18,11 +18,14 @@ package com.example.projectcompose
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.projectcompose.main.MainViewModel
+import com.example.projectcompose.moviedetails.MovieDetailsViewModel
+import com.example.projectcompose.movieentry.MovieEntryViewModel
+import com.example.projectcompose.movielist.MovieListViewModel
+import com.example.projectcompose.settings.SettingsViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app
@@ -32,6 +35,26 @@ object AppViewModelProvider {
         // Initializer for ItemEditViewModel
         initializer {
             MainViewModel(
+                movieListApplication().container.repo
+            )
+        }
+        initializer {
+            SettingsViewModel(
+                movieListApplication().container.repo
+            )
+        }
+        initializer {
+            MovieListViewModel(
+                movieListApplication().container.repo
+            )
+        }
+        initializer {
+            MovieEntryViewModel(
+                movieListApplication().container.repo
+            )
+        }
+        initializer {
+            MovieDetailsViewModel(
                 movieListApplication().container.repo
             )
         }

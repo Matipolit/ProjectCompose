@@ -7,15 +7,14 @@ import com.example.projectcompose.DataRepo;
 import androidx.lifecycle.ViewModel;
 
 class SettingsViewModel(private val repo: DataRepo): ViewModel() {
-    var uiState by mutableStateOf(SettingsUiState())
+    var settingsState by mutableStateOf(SettingsUiState())
         private set
 
-    fun updateUiState(newImageInt: Int) {
-        uiState = SettingsUiState(image = newImageInt)
+    fun updateSettingsState(newImageInt: Int) {
         repo.saveImgNum(newImageInt)
-        }
+    }
 }
 
 data class SettingsUiState(
-        val image: Int = 1
+    var image: Int = 0
 )

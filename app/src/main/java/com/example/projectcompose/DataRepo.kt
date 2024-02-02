@@ -1,6 +1,5 @@
 package com.example.projectcompose;
 
-import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Dao
@@ -21,9 +20,10 @@ enum class Genre {
 }
 
 @Entity
-data class Film(
+data class Movie(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
+    val director: String,
     val year: Int,
     val genre: Genre,
     val rating: Float,
@@ -31,37 +31,40 @@ data class Film(
 
 
 @Dao
-interface FilmDao {
+interface MovieDao {
     @Insert
-    fun insertAll(vararg films: Film)
+    fun insertAll(vararg movies: Movie)
 
     @Delete
-    fun delete(film: Film)
+    fun delete(movie: Movie)
 
-    @Query("SELECT * FROM film ORDER BY title")
-    fun getAll(): Flow<List<Film>>
+    @Query("SELECT * FROM movie ORDER BY title")
+    fun getAll(): Flow<List<Movie>>
     //fun getAll(): LiveData<List<Film>>
 
+    @Query("SELECT * FROM movie WHERE id = :id LIMIT 1")
+    fun getMovie(id: Int): Movie
+
     @Update
-    fun updateFilms(vararg films: Film)
+    fun updateFilms(vararg movies: Movie)
 }
 
-@Database(entities = [Film::class], version = 1)
-abstract class FilmDatabase: RoomDatabase() {
-    abstract fun filmDao(): FilmDao
+@Database(entities = [Movie::class], version = 1)
+abstract class MovieDatabase: RoomDatabase() {
+    abstract fun filmDao(): MovieDao
     companion object {
         // Singleton prevents multiple instances of database opening at the
         // same time.
         @Volatile
-        private var INSTANCE: FilmDatabase? = null
+        private var INSTANCE: MovieDatabase? = null
 
-        fun getDatabase(context: Context): FilmDatabase{
+        fun getDatabase(context: Context): MovieDatabase{
             // if the INSTANCE is not null, then return it,
             // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    FilmDatabase::class.java,
+                    MovieDatabase::class.java,
                     "film_database"
                 ).allowMainThreadQueries().build()
                 INSTANCE = instance
@@ -74,14 +77,14 @@ abstract class FilmDatabase: RoomDatabase() {
 
 
 class DataRepo(context: Context) {
-    private var db: FilmDatabase
-    private var dao: FilmDao
+    private var db: MovieDatabase
+    private var dao: MovieDao
     //private var allFilms: LiveData<List<Film>>
-    private var allFilms: Flow<List<Film>>
+    private var allFilms: Flow<List<Movie>>
     private var sharedPreferences: SharedPreferences
 
     init {
-        db = FilmDatabase.getDatabase(context)
+        db = MovieDatabase.getDatabase(context)
         dao = db.filmDao()
         allFilms = dao.getAll()
         sharedPreferences = context.getSharedPreferences("data", 0)
@@ -96,20 +99,24 @@ class DataRepo(context: Context) {
     }
 
     //fun getData(): LiveData<List<Film>> {
-    fun getData(): Flow<List<Film>> {
+    fun getData(): Flow<List<Movie>> {
         return allFilms
     }
 
-    fun addItem(item: Film) {
+    fun getItem(id: Int): Movie {
+        return dao.getMovie(id)
+    }
+
+    fun addItem(item: Movie) {
         dao.insertAll(item)
     }
 
-    fun editItem(item: Film) {
+    fun editItem(item: Movie) {
         dao.updateFilms(item)
     }
 
-    fun deleteItems(films: List<Film>){
-        films.forEach {
+    fun deleteItems(movies: List<Movie>){
+        movies.forEach {
             dao.delete(it)
         }
     }

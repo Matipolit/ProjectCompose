@@ -1,6 +1,5 @@
 package com.example.projectcompose.main
 
-import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,13 +13,12 @@ class MainViewModel(private val repo: DataRepo): ViewModel() {
 
     fun updateUiState() {
         uiState = MainUiState(imageSource = when(repo.getImgNum()){
-            2 -> R.drawable.movie_2
+            1 -> R.drawable.movie_2
             else -> R.drawable.movie_1
         })
     }
 
 }
 data class MainUiState(
-
     val imageSource: Int = R.drawable.movie_1
 )

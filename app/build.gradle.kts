@@ -50,9 +50,12 @@ android {
     }
 }
 
+
 dependencies {
     val navVersion = "2.7.6"
     val roomVersion = "2.6.1"
+
+    implementation("com.github.a914-gowtham:compose-ratingbar:1.3.4")
 
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.room:room-runtime:$roomVersion")
